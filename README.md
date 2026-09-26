@@ -125,6 +125,90 @@ predict(w1, w2, test)
 test = np.array([[0], [0]])
 predict(w1, w2, test)
 ```
+```
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Input and output
+X = np.array([[0, 0, 1, 1],
+              [0, 1, 0, 1]])
+
+Y = np.array([[0, 1, 1, 0]])
+
+# Parameters
+input_size = 2
+hidden_size = 2
+output_size = 1
+lr = 0.1
+epochs = 10000
+
+# Initialize weights
+np.random.seed(2)
+W1 = np.random.rand(hidden_size, input_size)
+W2 = np.random.rand(output_size, hidden_size)
+
+# Sigmoid function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+
+# Training
+losses = []
+
+for i in range(epochs):
+
+    # Forward propagation
+    Z1 = np.dot(W1, X)
+    A1 = sigmoid(Z1)
+
+    Z2 = np.dot(W2, A1)
+    A2 = sigmoid(Z2)
+
+    # Loss
+    loss = -np.mean(Y * np.log(A2) + (1-Y) * np.log(1-A2))
+    losses.append(loss)
+
+    # Backpropagation
+    dZ2 = A2 - Y
+    dW2 = np.dot(dZ2, A1.T) / 4
+
+    dZ1 = np.dot(W2.T, dZ2) * A1 * (1-A1)
+    dW1 = np.dot(dZ1, X.T) / 4
+
+    # Update weights
+    W2 = W2 - lr * dW2
+    W1 = W1 - lr * dW1
+
+
+# Plot loss
+plt.plot(losses)
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.title("Training Loss")
+plt.show()
+
+
+# Prediction function
+def predict(x):
+
+    A1 = sigmoid(np.dot(W1, x))
+    A2 = sigmoid(np.dot(W2, A1))
+
+    if A2[0, 0] >= 0.5:
+        return 1
+    else:
+        return 0
+
+
+# Test XOR
+print("Input  Output")
+
+for x in [[0,0], [0,1], [1,0], [1,1]]:
+
+    x = np.array(x).reshape(2,1)
+
+    print(x.flatten(), "  ", predict(x))
+```
 
 
 <H3>Output:</H3>
